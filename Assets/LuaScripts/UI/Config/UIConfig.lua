@@ -32,11 +32,11 @@ local UIModule = {
 	ExamRoleMain=require "UI.ExamRoleMain.ExamRoleMainConfig",
 	--模块描述
 	ExamRoleTitle=require "UI.ExamRoleTitle.ExamRoleTitleConfig",
-	--模块描述
+	--UISERVER
+	UIServer=require "UI.UIServer.UIServerConfig",
 	UILOGIN=require "UI.UILOGIN.UILOGINConfig",
 	--模块描述
-	UIMyLogin=require "UI.UIMyLogin.UIMyLoginConfig",
-	--AppendCode
+	UIMyLogin=require "UI.UIMyLogin.UIMyLoginConfig",	--AppendCode
 }
 
 local UIConfig = {}

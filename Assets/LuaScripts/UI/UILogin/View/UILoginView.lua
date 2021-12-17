@@ -43,7 +43,12 @@ local function ClickOnLoginBtn(self)
     --self.ctrl:LogindatangServer(self.Model);
 	--self.ctrl:LogindatangServer(self.model)
 	
+
+    --UIManager.GetInstance():OpenWindow(UIWindowNames.UIServer);
+    --UIManager.GetInstance().CloseWindow(UIWindowNames.UILogin);
+    --连接服务器
     self.ctrl:LoginDragonServer();
+    
 
     -----测试xml解析
  
