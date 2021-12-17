@@ -10,6 +10,13 @@
 /[Ll]ogs/
 /[Mm]emoryCaptures/
 
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Ll]ogs/
+[Vv]Xcode/
+[Vv]Studio/
+
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta
 
@@ -58,3 +65,28 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+
+# xlua-framework
+Assets/LuaScripts/NppGTags.cfg.meta
+Assets/LuaScripts/NppGTags.cfg
+Assets/LuaScripts/GTAGS.meta
+Assets/LuaScripts/GTAGS
+Assets/LuaScripts/GRTAGS.meta
+Assets/LuaScripts/GRTAGS
+Assets/LuaScripts/GPATH.meta
+Assets/LuaScripts/GPATH
+
+AssetBundles/
+Assets/AssetsPackage/Lua/
+Assets/AssetsPackage/Lua.meta
+
+# 资源
+Assets/Scenes_Resourses/
+
+# xlua
+Assets/XLua/Gen/
+Assets/XLua/Gen.meta
+
+Assets/StreamingAssets/AssetBundles/
+Assets/StreamingAssets/AssetBundles.meta
+.idea/
