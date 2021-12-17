@@ -1,8 +1,13 @@
 local MyClientData = BaseClass("MyClientData",Singleton)
 
-local function __init(self)
-    
+local function __init(self)  
     self.allservers ={}
+
+    self.app_version = CS.GameChannel.ChannelManager.instance.appVersion
+    self.res_version = CS.GameChannel.ChannelManager.instance.resVersion
+    self.account = CS.UnityEngine.PlayerPrefs.GetString("account")
+    self.password = CS.UnityEngine.PlayerPrefs.GetString("password")
+    self.login_server_id = CS.UnityEngine.PlayerPrefs.GetInt("login_server_id")
 end
 
 local function SetAccount(self,acctoun,password)
@@ -41,10 +46,21 @@ local function GetAllservers(self)
     return self.allservers
 end
 
+local function SetLoginServerID(self, id)
+    self.login_server_id = id
+    CS.UnityEngine.PlayerPrefs.SetInt("login_server_id", id)
+end
+
+local function GetVersion(self)
+    return self.app_version,self.res_version
+end
+
 MyClientData.__init = __init
 MyClientData.SetRecommandGate = SetRecommandGate
 MyClientData.SetAllservers=SetAllservers
 MyClientData.GetAllservers=GetAllservers
 MyClientData.SetLoginToken=SetLoginToken
+MyClientData.SetLoginServerID = SetLoginServerID
+MyClientData.GetActive = GetVersion
 
 return MyClientData
