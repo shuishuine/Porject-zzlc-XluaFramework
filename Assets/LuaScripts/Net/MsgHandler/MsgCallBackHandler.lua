@@ -9,21 +9,63 @@
 local MsgCallBackHandler = {}
 local MsgIDDefine = require("Net/Config/MsgIDDefine")
 local MsgIDMap = require("Net/Config/MsgIDMap")
-
 local SpriteTable=require("Config.Data.SpriteTable")
 
+-- 登录返回消息，存储数据，关闭登录UI，打开选服UI
+-- 存储数据：token、 推荐服数据、 所有服数据
+-- 选服UI进入服务器时需要连接游戏服务器
+local function Handle_QueryGateArg(msg)
+    Logger.Log("登录返回QueryGateRes消息，存储数据，关闭登录UI，打开选服UI")
+    MyClientData:GetInstance():SetLoginToken(msg.loginToken)
+    MyClientData:GetInstance():SetRecommandGate(msg.RecommandGate)
+    MyClientData:GetInstance():SetAllservers(msg.allservers)
+    UIManager:GetInstance():CloseWindow(UIWindowNames.UIMyLogin)
+    UIManager:GetInstance():OpenWindow(UIWindowNames.UIServer)
+end
+
+-- 处理服务器有错误等情况时，返回的消息
+local function Handle_ErrorInfo(msg)
+    Logger.Log("服务器 error = " .. tostring(msg.errorno) .. "   param=" .. tostring(msg.param))
+end
+
+-- 连接上游戏服务器后，由服务器主动下发的第一个消息，保存里面的session，用于以后的短线重连
+local function Handle_LoginChallenge(msg)
+    Logger.Log("LoginChallenge消息，challenge= " .. msg.challenge .. "，session=" .. tostring(msg.session))
+    Logger.Log("选服结束")
+    UIManager:GetInstance():CloseWindow(UIWindowNames.UIServer)
+    return; -- 进度暂停
+    
+    ClientData:GetInstance():SetSessionAndchallenge(msg)
+
+    local clientdata = ClientData:GetInstance()
+    if ClientData:GetInstance().loginToken ~= nil then
+        local tmpMsg = MsgIDMap[MsgIDDefine.LoginArg].argMsg
+
+        -----向游戏服务器发送LoginArg 登录消息，带着token等信息
+        -- tmpMsg.token = CS.System.Convert.FromBase64String(clientdata.loginToken)
+        tmpMsg.token = clientdata.loginToken
+        tmpMsg.gameserverid = clientdata.RecommandGate.serverid
+        tmpMsg.openid = "a456456" ---openid必须需要使用这个，内部授权账户
+        tmpMsg.loginzoneid = clientdata.loginzoneid
+        tmpMsg.pc = "0.0.0"
+
+        HallConnector:GetInstance():SendMessage(MsgIDDefine.LoginArg, tmpMsg)
+    end
+end
+
+
 ---------------连接成功的回调函数-------------------
-local function OnConnect(self, sender, result, msg)
-    Logger.Log("连接结果" .. result)
-    -- if result < 0 then
-    --     Logger.LogError("Connect err : " )
-    --     return
-    -- end
-end
+-- local function OnConnect(self, sender, result, msg)
+--     Logger.Log("连接结果" .. result)
+--     -- if result < 0 then
+--     --     Logger.LogError("Connect err : " )
+--     --     return
+--     -- end
+-- end
 -------------------------连接失败的回调函数----------------------
-local function OnClose(self, sender, result, msg)
-    Logger.Log("连接关闭 result:" .. result)
-end
+-- local function OnClose(self, sender, result, msg)
+--     Logger.Log("连接关闭 result:" .. result)
+-- end
 -- message QueryGateRes{
 -- 	optional bytes loginToken = 1;
 -- 	optional bytes gateconfig = 2;
@@ -42,19 +84,21 @@ end
 -- 	repeated uint32 bespeakserverids = 15;
 -- }
 
--- 处理授权消息的返回
-local function Handle_QueryGateArg(msg)
-    Logger.Log("龙之谷的消息，切换下场景")
-    -----loginToken = Gp6/yhE981K2jpR+fRUhZ2QAAAABAAAA
-    ClientData:GetInstance():SetLoginToken(msg.loginToken)
-    ClientData:GetInstance():SetServerInfo(msg.RecommandGate)
-    ClientData:GetInstance():Setloginzoneid(msg.loginzoneid)
+-- -- 处理授权消息的返回
+-- local function Handle_QueryGateArg(msg)
+--     Logger.Log("龙之谷的消息，切换下场景")
+--     -----loginToken = Gp6/yhE981K2jpR+fRUhZ2QAAAABAAAA
+--     ClientData:GetInstance():SetLoginToken(msg.loginToken)
+--     ClientData:GetInstance():SetServerInfo(msg.RecommandGate)
+--     ClientData:GetInstance():Setloginzoneid(msg.loginzoneid)
 
-    local server = ClientData:GetInstance().RecommandGate
-    HallConnector:GetInstance():Connect(server.ip, server.port, Bind(self, OnConnect), Bind(self, OnClose))
+--     local server = ClientData:GetInstance().RecommandGate
 
-    ---	SceneManager:GetInstance():SwitchScene(SceneConfig.HomeScene)
-end
+--     -- 选择进入服务器时开始连接，不放在这里
+--     --HallConnector:GetInstance():Connect(server.ip, server.port, Bind(self, OnConnect), Bind(self, OnClose))
+
+--     ---	SceneManager:GetInstance():SwitchScene(SceneConfig.HomeScene)
+-- end
 
 -- message ErrorInfo{
 -- 	optional uint32 errorno = 1;
@@ -63,9 +107,9 @@ end
 -- 	optional bool istip = 4;
 -- }
 ---------------------------处理服务器有错误等情况时，返回的消息--------------------------------
-local function Handle_ErrorInfo(msg)
-    Logger.Log("服务器 error = " .. tostring(msg.errorno) .. "   param=" .. tostring(msg.param))
-end
+-- local function Handle_ErrorInfo(msg)
+--     Logger.Log("服务器 error = " .. tostring(msg.errorno) .. "   param=" .. tostring(msg.param))
+-- end
 
 -- message LoginChallenge{
 -- 	optional string challenge = 1;
@@ -91,27 +135,27 @@ end
 
 -- UserData = require("DataCenter.UserData.UserData")
 
-----============ 拿到授权后，连接上游戏服务器后，由服务器主动下发的第一个消息，保存里面的session，用于以后的短线重连   ============
-local function Handle_LoginChallenge(msg)
-    Logger.Log("LoginChallenge 消息   challenge= " .. msg.challenge .. "   session=" .. tostring(msg.session))
+-- ----============ 拿到授权后，连接上游戏服务器后，由服务器主动下发的第一个消息，保存里面的session，用于以后的短线重连   ============
+-- local function Handle_LoginChallenge(msg)
+--     Logger.Log("LoginChallenge 消息   challenge= " .. msg.challenge .. "   session=" .. tostring(msg.session))
 
-    ClientData:GetInstance():SetSessionAndchallenge(msg)
+--     ClientData:GetInstance():SetSessionAndchallenge(msg)
 
-    local clientdata = ClientData:GetInstance()
-    if ClientData:GetInstance().loginToken ~= nil then
-        local tmpMsg = MsgIDMap[MsgIDDefine.LoginArg].argMsg
+--     local clientdata = ClientData:GetInstance()
+--     if ClientData:GetInstance().loginToken ~= nil then
+--         local tmpMsg = MsgIDMap[MsgIDDefine.LoginArg].argMsg
 
-        -----向游戏服务器发送LoginArg 登录消息，带着token等信息
-        -- tmpMsg.token = CS.System.Convert.FromBase64String(clientdata.loginToken)
-        tmpMsg.token = clientdata.loginToken
-        tmpMsg.gameserverid = clientdata.RecommandGate.serverid
-        tmpMsg.openid = "a456456" ---openid必须需要使用这个，内部授权账户
-        tmpMsg.loginzoneid = clientdata.loginzoneid
-        tmpMsg.pc = "0.0.0"
+--         -----向游戏服务器发送LoginArg 登录消息，带着token等信息
+--         -- tmpMsg.token = CS.System.Convert.FromBase64String(clientdata.loginToken)
+--         tmpMsg.token = clientdata.loginToken
+--         tmpMsg.gameserverid = clientdata.RecommandGate.serverid
+--         tmpMsg.openid = "a456456" ---openid必须需要使用这个，内部授权账户
+--         tmpMsg.loginzoneid = clientdata.loginzoneid
+--         tmpMsg.pc = "0.0.0"
 
-        HallConnector:GetInstance():SendMessage(MsgIDDefine.LoginArg, tmpMsg)
-    end
-end
+--         HallConnector:GetInstance():SendMessage(MsgIDDefine.LoginArg, tmpMsg)
+--     end
+-- end
 
 -----------=======  loginArg的对应返回消息，登录返回消息，里面包含角色信息，=======================================
 local function Handle_LoginRes(msg)
