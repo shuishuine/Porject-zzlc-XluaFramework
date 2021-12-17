@@ -67,8 +67,13 @@ local function WebRequest(url, callback)
 end
 
 local function ConnectServer(self)
+    print(655556566)
+    UIManager:GetInstance():OpenWindow(UIWindowNames.UIServer)
     ---	HallConnector:GetInstance():Connect("192.168.1.245", 10020, Bind(self, OnConnect), Bind(self, OnClose))
     HallConnector:GetInstance():Connect("127.0.0.1", 25001, Bind(self, OnConnect), Bind(self, OnClose))
+  
+    --UIManager:GetInstance():OpenWindow(UIWindowNames.UILoginServer)
+   -- UIManager.GetInstance().CloseWindow(UIWindowNames.UILogin);
 end
 local function LoginDragonServer(self)
     ConnectServer(self)
@@ -178,6 +183,7 @@ local function LoginServer(self, name, password)
 end
 
 local function ChooseServer(self)
+    print("打開选择服务器的界面！！！！！")
     UIManager:GetInstance():OpenWindow(UIWindowNames.UILoginServer)
 end
 local function SendSelectRoleNew(self)
