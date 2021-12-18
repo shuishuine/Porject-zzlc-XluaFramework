@@ -16,6 +16,8 @@ local SpriteTable=require("Config.Data.SpriteTable")
 -- 选服UI进入服务器时需要连接游戏服务器
 local function Handle_QueryGateArg(msg)
     Logger.Log("登录返回QueryGateRes消息，存储数据，关闭登录UI，打开选服UI")
+    print("33333333333333333333333" , msg.RecommandGate.serverid)
+    print(msg.error);
     MyClientData:GetInstance():SetLoginToken(msg.loginToken)
     MyClientData:GetInstance():SetRecommandGate(msg.RecommandGate)
     MyClientData:GetInstance():SetAllservers(msg.allservers)
@@ -33,25 +35,26 @@ local function Handle_LoginChallenge(msg)
     Logger.Log("LoginChallenge消息，challenge= " .. msg.challenge .. "，session=" .. tostring(msg.session))
     Logger.Log("选服结束")
     UIManager:GetInstance():CloseWindow(UIWindowNames.UIServer)
-    return; -- 进度暂停
+    return -- 进度暂停
     
-    ClientData:GetInstance():SetSessionAndchallenge(msg)
+    -- ClientData:GetInstance():SetSessionAndchallenge(msg)
 
-    local clientdata = ClientData:GetInstance()
-    if ClientData:GetInstance().loginToken ~= nil then
-        local tmpMsg = MsgIDMap[MsgIDDefine.LoginArg].argMsg
+    -- local clientdata = ClientData:GetInstance()
+    -- if ClientData:GetInstance().loginToken ~= nil then
+    --     local tmpMsg = MsgIDMap[MsgIDDefine.LoginArg].argMsg
 
-        -----向游戏服务器发送LoginArg 登录消息，带着token等信息
-        -- tmpMsg.token = CS.System.Convert.FromBase64String(clientdata.loginToken)
-        tmpMsg.token = clientdata.loginToken
-        tmpMsg.gameserverid = clientdata.RecommandGate.serverid
-        tmpMsg.openid = "a456456" ---openid必须需要使用这个，内部授权账户
-        tmpMsg.loginzoneid = clientdata.loginzoneid
-        tmpMsg.pc = "0.0.0"
+    --     -----向游戏服务器发送LoginArg 登录消息，带着token等信息
+    --     -- tmpMsg.token = CS.System.Convert.FromBase64String(clientdata.loginToken)
+    --     tmpMsg.token = clientdata.loginToken
+    --     tmpMsg.gameserverid = clientdata.RecommandGate.serverid
+    --     tmpMsg.openid = "a456456" ---openid必须需要使用这个，内部授权账户
+    --     tmpMsg.loginzoneid = clientdata.loginzoneid
+    --     tmpMsg.pc = "0.0.0"
 
-        HallConnector:GetInstance():SendMessage(MsgIDDefine.LoginArg, tmpMsg)
-    end
+    --     HallConnector:GetInstance():SendMessage(MsgIDDefine.LoginArg, tmpMsg)
+    -- end
 end
+
 
 
 ---------------连接成功的回调函数-------------------

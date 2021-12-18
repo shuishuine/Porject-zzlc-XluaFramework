@@ -34,7 +34,7 @@ local function OnDestroy(self)
 end
 
 local function GetVersion(self)
-	local appVer,resVer = ClientData:GetInstance():GetVersion()
+	local appVer,resVer = MyClientData:GetInstance():GetVersion()
 	self.client_app_ver = appVer
 	self.client_res_ver = resVer
 end

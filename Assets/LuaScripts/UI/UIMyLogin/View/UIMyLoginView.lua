@@ -18,6 +18,7 @@ local text_app_version_path = "ContentRoot/AppVersionText"
 local text_res_version_path = "ContentRoot/ResVersionText"
 
 local function LoginGame(self)
+	
 	self.ctrl:LoginGame(self.input_account:GetText(),self.input_password:GetText())
 end
 
@@ -38,6 +39,7 @@ local function OnEnable(self)
 	base.OnEnable(self)
 	-- 窗口关闭时可以清理的成员变量放这
 
+	self:ConnectServer()
 	self:RefreshPanel()
 end
 -- 关闭
@@ -53,6 +55,22 @@ local function RefreshPanel(self)
 end
 
 
+local function OnConnect(self, sender, result, msg)
+    Logger.Log("连接结果" .. result .. msg)
+    if result < 0 then
+        Logger.LogError("Connect err : " .. msg)
+        return
+    end
+end
+
+local function OnClose(self, sender, result, msg)
+    Logger.Log("连接关闭 result:" .. result .. "msg:" .. msg)
+end
+
+local function ConnectServer(self)
+    HallConnector:GetInstance():Connect("127.0.0.1", 25001, Bind(self, OnConnect), Bind(self, OnClose))
+end
+
 
 
 UIMyLoginView.OnCreate = OnCreate
@@ -60,6 +78,7 @@ UIMyLoginView.OnEnable = OnEnable
 UIMyLoginView.OnDestroy = OnDestroy
 UIMyLoginView.LoginGame = LoginGame
 UIMyLoginView.RefreshPanel = RefreshPanel
+UIMyLoginView.ConnectServer = ConnectServer
 
 return UIMyLoginView
 

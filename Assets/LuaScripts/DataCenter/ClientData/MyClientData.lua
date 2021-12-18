@@ -32,8 +32,10 @@ local function SetRecommandGate(self,recommandGate)
 end
 
 local function SetAllservers(self,allservers)
+
     --保存游戏服务器列表
-    for key, value in ipairs(allservers) do
+    for key, value in pairs(allservers) do
+        print(key,value)
         self.allservers[key] = value
     end
 end
@@ -43,6 +45,7 @@ local function SetLoginToken(self,loginToken)
 end
 
 local function GetAllservers(self)
+    print("22222222222222222222222"..  table.count(self.allservers) )
     return self.allservers
 end
 
@@ -61,6 +64,6 @@ MyClientData.SetAllservers=SetAllservers
 MyClientData.GetAllservers=GetAllservers
 MyClientData.SetLoginToken=SetLoginToken
 MyClientData.SetLoginServerID = SetLoginServerID
-MyClientData.GetActive = GetVersion
+MyClientData.GetVersion = GetVersion
 
 return MyClientData
