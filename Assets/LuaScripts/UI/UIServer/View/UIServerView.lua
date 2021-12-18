@@ -38,7 +38,7 @@ local function OnCreate(self)
 	
 	self.ok=self:AddComponent(UIButton,"ChooseOK")
 	--确认选择服务器
-	self.ok:SetOnClick(OKServer(self))
+	self.ok:SetOnClick(self,OKServer)
 	-- 窗口生命周期内保持的成员变量放这
 	self.server_group=self:AddComponent(UIWrapGroup,uiserver_itemWarp_path,UIServerWrapItem)
 
@@ -47,7 +47,7 @@ end
 local function OnEnable(self)
 	base.OnEnable(self)
 	-- 窗口关闭时可以清理的成员变量放这
-	self.server_group:SetLength(#self.allservers)
+	self.server_group:SetLength(#self.model.allservers)
 	-- 区域列表回调：UIWrapGroup建立专门脚本UIServerItem刷新示例
 	self.server_group:ResetToBeginning()
 end
