@@ -111,6 +111,12 @@ MsgDataNames= require "Net.MsgHandler.AutoGen.MsgDataNames"
 MsgHandler=require("Net.MsgHandler.AutoGen.MsgHandler")
 MsgEventHandler=require("Net.MsgHandler.MsgEventHandler")
 HallConnector = require "Net.Connector.HallConnector"
+
+
+--MY
+MyClientData = require"DataCenter.ClientData.MyClientData"
+
+
 -- 单例类初始化
 UIManager:GetInstance()
 DataManager:GetInstance()

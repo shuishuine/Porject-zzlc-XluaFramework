@@ -35,7 +35,11 @@ local UIModule = {
 	
 	--UISERVER
 	UIServer=require "UI.UIServer.UIServerConfig",
-	--AppendCode
+	UILOGIN=require "UI.UILOGIN.UILOGINConfig",
+	--模块描述
+	UIMyLogin=require "UI.UIMyLogin.UIMyLoginConfig",	--AppendCode
+
+--AppendCode
 }
 
 local UIConfig = {}
