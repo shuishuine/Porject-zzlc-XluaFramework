@@ -13,14 +13,15 @@ local UIServerWrapItem = require "UI.UIServer.Component.UIServerItem"
 
 local uiserver_itemWarp_path="SV/Viewport/Content"
 local function OnConnect()
-	Logger.Log("连接结果" .. result)
+	Logger.Log("连接结果"  )
 end
 
 local function OnClose()
-	Logger.Log("连接关闭 result:" .. result)
+	Logger.Log("连接关闭 result:"  )
 end
 local function OKServer(self)
 	--发送选择服务器消息号
+	print(self.LoginGateData.ip,self.LoginGateData.port)
 	HallConnector:GetInstance():Connect(self.LoginGateData.ip, self.LoginGateData.port, Bind(self, OnConnect), Bind(self, OnClose))
 end
 
