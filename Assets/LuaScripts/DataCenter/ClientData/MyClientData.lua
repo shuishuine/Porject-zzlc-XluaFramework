@@ -33,6 +33,7 @@ end
 
 local function SetAllservers(self,allservers)
     --保存游戏服务器列表
+    print(555555)
     for key, value in ipairs(allservers) do
         self.allservers[key] = value
     end
