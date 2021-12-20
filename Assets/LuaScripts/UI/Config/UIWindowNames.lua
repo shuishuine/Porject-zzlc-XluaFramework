@@ -46,6 +46,8 @@ local UIWindowNames = {
 	UIServer = "UIServer",	UILOGIN = "UILOGIN",
 	--模块描述
 	UIMyLogin = "UIMyLogin",	
+	--模块描述
+	SelectRoleUI = "SelectRoleUI",
 	--AppendCode
 
 }

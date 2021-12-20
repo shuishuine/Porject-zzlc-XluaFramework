@@ -37,9 +37,13 @@ local UIModule = {
 	UIServer=require "UI.UIServer.UIServerConfig",
 	UILOGIN=require "UI.UILOGIN.UILOGINConfig",
 	--模块描述
-	UIMyLogin=require "UI.UIMyLogin.UIMyLoginConfig",	--AppendCode
+	UIMyLogin=require "UI.UIMyLogin.UIMyLoginConfig",	--模块描述
+	SelectRoleUI=require "UI.SelectRoleUI.SelectRoleUIConfig",
+	--AppendCode
 
---AppendCode
+--模块描述
+	SelectRoleUI=require "UI.SelectRoleUI.SelectRoleUIConfig",
+	--AppendCode
 }
 
 local UIConfig = {}

@@ -16,11 +16,12 @@ local SpriteTable=require("Config.Data.SpriteTable")
 -- 选服UI进入服务器时需要连接游戏服务器
 local function Handle_QueryGateArg(msg)
     Logger.Log("登录返回QueryGateRes消息，存储数据，关闭登录UI，打开选服UI")
-    print("33333333333333333333333" , msg.RecommandGate.serverid)
-    print(msg.error);
+   -- print("33333333333333333333333" , msg.RecommandGate.serverid)
+    --print(msg.error);
     MyClientData:GetInstance():SetLoginToken(msg.loginToken)
     MyClientData:GetInstance():SetRecommandGate(msg.RecommandGate)
     MyClientData:GetInstance():SetAllservers(msg.allservers)
+    MyClientData:GetInstance():Setloginzoneid(msg.loginzoneid)
     UIManager:GetInstance():CloseWindow(UIWindowNames.UIMyLogin)
     UIManager:GetInstance():OpenWindow(UIWindowNames.UIServer)
 end
@@ -35,24 +36,22 @@ local function Handle_LoginChallenge(msg)
     Logger.Log("LoginChallenge消息，challenge= " .. msg.challenge .. "，session=" .. tostring(msg.session))
     Logger.Log("选服结束")
     UIManager:GetInstance():CloseWindow(UIWindowNames.UIServer)
-    return -- 进度暂停
+    --return -- 进度暂停
     
-    -- ClientData:GetInstance():SetSessionAndchallenge(msg)
+    MyClientData:GetInstance():SetSessionAndchallenge(msg)
 
-    -- local clientdata = ClientData:GetInstance()
-    -- if ClientData:GetInstance().loginToken ~= nil then
-    --     local tmpMsg = MsgIDMap[MsgIDDefine.LoginArg].argMsg
-
-    --     -----向游戏服务器发送LoginArg 登录消息，带着token等信息
-    --     -- tmpMsg.token = CS.System.Convert.FromBase64String(clientdata.loginToken)
-    --     tmpMsg.token = clientdata.loginToken
-    --     tmpMsg.gameserverid = clientdata.RecommandGate.serverid
-    --     tmpMsg.openid = "a456456" ---openid必须需要使用这个，内部授权账户
-    --     tmpMsg.loginzoneid = clientdata.loginzoneid
-    --     tmpMsg.pc = "0.0.0"
-
-    --     HallConnector:GetInstance():SendMessage(MsgIDDefine.LoginArg, tmpMsg)
-    -- end
+    local clientdata = MyClientData:GetInstance()
+    if MyClientData:GetInstance().loginToken ~= nil then
+        local tmpMsg = MsgIDMap[MsgIDDefine.LoginArg].argMsg
+        -----向游戏服务器发送LoginArg 登录消息，带着token等信息
+        -- tmpMsg.token = CS.System.Convert.FromBase64String(clientdata.loginToken)
+        tmpMsg.token = clientdata.loginToken
+        tmpMsg.gameserverid = clientdata.recommandGate.serverid
+        tmpMsg.openid = "a456456" ---openid必须需要使用这个，内部授权账户
+        tmpMsg.loginzoneid = clientdata.loginzoneid
+        tmpMsg.pc = "0.0.0"
+        HallConnector:GetInstance():SendMessage(MsgIDDefine.LoginArg, tmpMsg)
+    end
 end
 
 
@@ -162,9 +161,9 @@ end
 
 -----------=======  loginArg的对应返回消息，登录返回消息，里面包含角色信息，=======================================
 local function Handle_LoginRes(msg)
-    Logger.Log("msg.accountData.account = " .. msg.accountData.account .. "  selectSlot =  " ..
-                   msg.accountData.selectSlot .. " result = " .. msg.result .. "  is_backflow_server =" ..
-                   tostring(msg.data.is_backflow_server) .. " backflow_level =" .. msg.data.backflow_level)
+    -- Logger.Log("msg.accountData.account = " .. msg.accountData.account .. "  selectSlot =  " ..
+    --                msg.accountData.selectSlot .. " result = " .. msg.result .. "  is_backflow_server =" ..
+    --                tostring(msg.data.is_backflow_server) .. " backflow_level =" .. msg.data.backflow_level)
 
     for i = 1, 9 do
         local role1bytes = msg.accountData["role" .. i]
@@ -173,16 +172,16 @@ local function Handle_LoginRes(msg)
             local m = RoleBriefInfo_pb.RoleBriefInfo()
             ----由于role1  到role9都是bytes类型，即c#的byte[] 。  需要使用  RoleBriefInfo_pb.RoleBriefInfo反序列化成角色信息
             m:ParseFromString(role1bytes)
-            ------打印每个角色信息
-            Logger.Log(i.."  角色  name= " .. m.name .. "  type = " .. m.type .. "  roleID=" .. tostring(m.roleID) ..
-                           "   level = " .. m.level)
+
+            MyClientData:GetInstance():SetRoles(m,i)
         end
     end
+    UIManager:GetInstance():OpenWindow(UIWindowNames.SelectRoleUI)
 
     ------------------------发送选角色的消息给服务器----------------------------
-    local tmpMsg = MsgIDMap[MsgIDDefine.SelectRoleNew].argMsg
-    tmpMsg.index = 6 ---传从0开始的索引
-    HallConnector:GetInstance():SendMessage(MsgIDDefine.SelectRoleNew, tmpMsg)
+    -- local tmpMsg = MsgIDMap[MsgIDDefine.SelectRoleNew].argMsg
+    -- tmpMsg.index = 6 ---传从0开始的索引
+    -- HallConnector:GetInstance():SendMessage(MsgIDDefine.SelectRoleNew, tmpMsg)
 
     --------------发送创建角色的消息----------------------------
     --  local tmpMsg = MsgIDMap[MsgIDDefine.CreateRoleNew].argMsg
