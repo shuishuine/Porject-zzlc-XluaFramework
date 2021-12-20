@@ -35,14 +35,20 @@ local function InstanceRole(self,index)
 	print("当前选择职业："..roleType)
 	--实例当前职业
 	if math.ceil(roleType)~= -1 then
-		GameObjectPool:GetInstance():GetGameObjectAsync("Models/TestRole/"..math.ceil(roleType)..".prefab",function(game)
-			if theRole ~= nil then
-				--GameObjectPool:GetInstance():RecycleGameObject("Models/TestRole/"..math.ceil(roleType)..".prefab",theRole)
-				CS.UnityEngine.GameObject.Destroy(theRole)
-				theRole = nil
-			end
-			theRole = game
-		end)
+		-- GameObjectPool:GetInstance():GetGameObjectAsync("Models/TestRole/"..math.ceil(roleType)..".prefab",function(game)
+		-- 	if theRole ~= nil then
+		-- 		--GameObjectPool:GetInstance():RecycleGameObject("Models/TestRole/"..math.ceil(roleType)..".prefab",theRole)
+		-- 		CS.UnityEngine.GameObject.Destroy(theRole)
+		-- 		theRole = nil
+		-- 	end
+		-- 	theRole = game
+		-- end)
+		local game = CS.MyCombineMesh.CreateDefaultRoleOnUI(roleType,CS.UnityEngine.Vector3(1.78,-3.62,10),CS.UnityEngine.Quaternion.Euler(0,180,0),CS.UnityEngine.Vector3.one*8)
+		if theRole ~= nil then
+			CS.UnityEngine.GameObject.Destroy(theRole)
+			theRole = nil
+		end
+		theRole = game
 	end
 end
 local function OnCreate(self)
