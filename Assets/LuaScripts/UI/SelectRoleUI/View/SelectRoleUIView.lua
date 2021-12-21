@@ -11,8 +11,8 @@ local MsgIDDefine = require("Net/Config/MsgIDDefine")
 local MsgIDMap = require("Net/Config/MsgIDMap")
 local base = UIBaseView
 local theRole=nil
-local role=-2
-
+local role=-1
+local createRole =-1
 
 local function TheRoleName(self,index)
 	--  if self.model.allRole[role] ~= nil then
@@ -32,23 +32,26 @@ local function InstanceRole(self,index)
 	--根据index获取所选角色职业
 	role = index
 	local roleType = self.model:EstimateIndex(role+1)
-	print("当前选择职业："..roleType)
-	--实例当前职业
 	if math.ceil(roleType)~= -1 then
-		-- GameObjectPool:GetInstance():GetGameObjectAsync("Models/TestRole/"..math.ceil(roleType)..".prefab",function(game)
-		-- 	if theRole ~= nil then
-		-- 		--GameObjectPool:GetInstance():RecycleGameObject("Models/TestRole/"..math.ceil(roleType)..".prefab",theRole)
-		-- 		CS.UnityEngine.GameObject.Destroy(theRole)
-		-- 		theRole = nil
-		-- 	end
-		-- 	theRole = game
-		-- end)
+		--实例当前职业
 		local game = CS.MyCombineMesh.CreateDefaultRoleOnUI(roleType,CS.UnityEngine.Vector3(1.78,-3.62,10),CS.UnityEngine.Quaternion.Euler(0,180,0),CS.UnityEngine.Vector3.one*8)
 		if theRole ~= nil then
 			CS.UnityEngine.GameObject.Destroy(theRole)
 			theRole = nil
 		end
 		theRole = game
+		print("当前选择职业："..roleType)
+	else
+		--创建角色的职业
+		createRole = index+1
+		role = -1
+		local game = CS.MyCombineMesh.CreateDefaultRoleOnUI(createRole,CS.UnityEngine.Vector3(1.78,-3.62,10),CS.UnityEngine.Quaternion.Euler(0,180,0),CS.UnityEngine.Vector3.one*8)
+		if theRole ~= nil then
+			CS.UnityEngine.GameObject.Destroy(theRole)
+			theRole = nil
+		end
+		theRole = game
+		print("需要创建"..createRole)
 	end
 end
 local function OnCreate(self)
@@ -79,8 +82,16 @@ local function OnCreate(self)
 		-- end
 		------------------------发送选角色的消息给服务器----------------------------
 		if role ~= -1 then
+			print("=========================选择角色"..role)
 			local tmpMsg = MsgIDMap[MsgIDDefine.SelectRoleNew].argMsg
 			tmpMsg.index = role---传从0开始的索引
+			HallConnector:GetInstance():SendMessage(MsgIDDefine.SelectRoleNew, tmpMsg)
+		end
+		if createRole ~= -1 then
+			print("=========================创建角色"..createRole)
+			local tmpMsg = MsgIDMap[MsgIDDefine.CreateRoleNew].argMsg
+			tmpMsg.type = RoleType_pb.Role_Warrior
+			tmpMsg.name = "测试的名字";
 			HallConnector:GetInstance():SendMessage(MsgIDDefine.SelectRoleNew, tmpMsg)
 		end
 	end)
